@@ -1,0 +1,173 @@
+create tablespace prip
+datafile 'C:\oraclexe\app\oracle\oradata\XE\prip.dbf' size 100m
+autoextend on next 10m
+maxsize 500m;
+
+alter user prip default tablespace prip;
+
+drop table users;
+drop table host;
+drop table board_faq;
+drop table board_notice;
+drop table category_L;
+drop table category_s;
+drop table program;
+drop table review;
+drop table pay;
+drop table open_course;
+drop table course;
+drop table authority;
+
+drop sequence users_seq;
+
+--복합키
+--ALTER TABLE ADDRESS1
+--ADD CONSTRAINT AD_STCODE_PK PRIMARY KEY(AD_STCODE, AD_ADDRESS);
+
+--시퀀스
+--create sequence board_seq minvalue 0;
+--select board_seq.nextval from dual;
+
+create table users(
+    users_no number(6),
+    email NVARCHAR2(50), --n/n
+    password NVARCHAR2(60), --n/n
+    nickname NVARCHAR2(10), --n/n
+    phone VARCHAR2(11), --n/n
+    birthday date,
+    sex VARCHAR2(1),
+    profile VARCHAR2(50),
+    report_cnt number(1),
+    enabled VARCHAR2(1),
+    check_code VARCHAR2(20),
+    account nvarchar2(20)
+);
+ALTER TABLE users
+ADD CONSTRAINT users_no_PK PRIMARY KEY (users_no);
+
+create sequence users_seq minvalue 0;
+select users_seq.nextval from dual;
+
+create table host(
+    host_no number(6), --n/n
+    users_no number(6), --n/n
+    email nvarchar2(50), --n/n
+    password nvarchar2(60), --n/n
+    profile varchar2(50), --n/n
+    phone varchar2(11), --n/n
+    irum nvarchar2(10), --n/n
+    content clob, --n/n
+    nickname nvarchar2(50),
+    account nvarchar2(20),
+    report_cnt number(1),
+    enabled number(1)
+);
+
+create table board_faq(
+    faq_no number(5),
+    title NVARCHAR2(50),
+    content clob,
+    writer NVARCHAR2(6)
+);
+ALTER TABLE board_faq
+	ADD	CONSTRAINT FAQ_NO_pk
+    PRIMARY KEY (faq_no);
+
+create table board_notice(
+    notice_no number(6),
+    title NVARCHAR2(50),
+    content clob,
+    read_cnt number(10),
+    writer NVARCHAR2(6)
+);
+ALTER TABLE board_notice
+ADD CONSTRAINT notice_no_PK PRIMARY KEY (notice_no);
+
+
+create table category_L(
+    ca_L_no number(2),
+    name NVARCHAR2(10)
+);
+ALTER TABLE category_L
+ADD CONSTRAINT ca_L_no_PK PRIMARY KEY (ca_L_no);
+
+create table category_s(
+    ca_L_no number(2),
+    ca_s_no number(2),
+    name NVARCHAR2(10)
+);
+ALTER TABLE category_s
+ADD CONSTRAINT ca_s_no_PK PRIMARY KEY (ca_s_no);
+
+create table program(
+    pro_no number(6),
+    host_no number(6),
+    title NVARCHAR2(30),
+    content clob,
+    area nvarchar2(20),
+    cash number(10),
+    apply number(1),
+    enabled number(1),
+    ca_b_no number(2),
+    ca_s_no number(2)
+);
+ALTER TABLE program
+	ADD	CONSTRAINT pro_no_pk
+    PRIMARY KEY (
+			pro_no, host_no
+		);
+        
+--다른거 하고 시간남으면 별점 추가 후 진행
+create table review(
+    review_no number(6),
+    writer NVARCHAR2(6),
+    content clob,
+    write_time date,
+    pro_no number(6)
+);
+ALTER TABLE review
+ADD CONSTRAINT review_no_PK 
+PRIMARY KEY (review_no, pro_no);
+
+--결제 시스템 보완 필요
+create table pay(
+    pay_no number(5),
+    users_no number(6),
+    pro_no number(6),
+    day date,
+    cash number(10),
+    total number(10)
+);
+ALTER TABLE pay
+ADD CONSTRAINT pay_no_PK PRIMARY KEY (pay_no);
+
+create table open_course(
+    open_no number(3),
+    pro_no number(6),
+    host_no number(6),
+    schedule clob
+);
+ALTER TABLE open_course
+ADD	CONSTRAINT open_no_pk
+PRIMARY KEY (
+	open_no,
+	pro_no,
+	host_no
+);
+        
+create table course(
+    course_no number(6),
+    users_no number(6),
+    open_no number(3),
+    pro_no number(6),
+    host_no number(6),
+    enabled NVARCHAR2(1)
+);
+ALTER TABLE course
+ADD CONSTRAINT course_no_PK 
+PRIMARY KEY (course_no, users_no, open_no, pro_no, host_no);
+
+create table authority(
+    users_no number(6),
+    authority_name NVARCHAR2(50)
+);

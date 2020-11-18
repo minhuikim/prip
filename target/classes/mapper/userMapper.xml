@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.prip.dao.UserDao">
+	
+	<insert id="insert">
+		<selectKey keyProperty="u.userNo" resultType="int" order="BEFORE">
+			select users_seq.nextval from dual
+		</selectKey>
+		insert into users(users_no, email, password, nickname, phone, birthday, sex, profile, report_cnt, enabled, check_code, account)
+		values(#{u.userNo}, #{u.email}, #{u.password}, #{u.nickname}, #{u.phone}, #{u.birthday}, #{u.sex}, #{u.profile}, 0, 0, #{u.checkCode}, #{u.account})
+	</insert>
+</mapper>
